@@ -1,0 +1,24 @@
+{
+  "name": "detailstock",
+  "version": "1.0.0",
+  "description": "This is detailStock project backend",
+  "license": "ISC",
+  "author": "SANCHEZ",
+  "type": "commonjs",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts" ,
+    "start:dev": "nodemon --exec ts-node src/server.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "moment": "^2.30.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^7.0.2"
+  }
+}
