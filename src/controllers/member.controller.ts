@@ -12,7 +12,7 @@ memberController.signup = async (req: Request, res: Response) => {
         console.log("signup");
         const input: MemberInput = req.body,
             result: Member = await memberService.signup(input);
-
+        //TOKEN
         res.json({member: result});
     } catch (err) {
         console.log("Error, signup:", err);
@@ -26,7 +26,7 @@ memberController.login = async (req: Request, res: Response) => {
     try { 
         const input: LoginInput = req.body,
             result = await memberService.login(input);
-        
+            //TOKEN
             res.json({member: result})
     } catch (err) {
         console.log("Error, login:", err);
