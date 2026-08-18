@@ -10,7 +10,7 @@ routerAdmin
 routerAdmin
     .get("/signup", shopController.getSignup)
     .post("/signup", shopController.processSignup);
-
+routerAdmin.get("/logout", shopController.logout);
 routerAdmin.get("/check-me", shopController.checkAuthSession);
 // PRODUCT
 
