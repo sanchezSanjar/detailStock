@@ -7,10 +7,10 @@
     <div>PRODUCTS PAGE</div>
     <div><%= member.memberNick %></div>
 
-        <% products.forEach(function(value, key) { %>
-            <p><%= value.productName %> - <%= value.productSize%></p>
-        <% }) %>
-    </div>
+        <<% products.map((value, key) => { %>
+    <p><%= value.productName %> - <%= value.productSize %> </p>
+    <% }) %>
+  </div>
 </body>
 
 

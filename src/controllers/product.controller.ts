@@ -25,16 +25,17 @@ productController.createNewProduct = async (
   req: AdminRequest,  res: Response) => {
     try {
     console.log("creatNewProduct");
-        // if(!req.files?.length) 
-        // throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
+        if(!req.files?.length) 
+        throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
 
         const data: ProductInput = req.body;
-        // data.productImages = req.files?.map(ele => {
-        //     return ele.path;
-        // });
+        data.productImages = req.files?.map(ele => {
+            return ele.path;
+        });
         
-        // await productService.createNewProduct(data);
-        res.send(`<script> alert("Sucessfully creation!"); window.location.replace ('admin/product/all')</script>`
+        await productService.createNewProduct(data);
+        res.send(
+            `<script> alert("Sucessfully creation!"); window.location.replace ('admin/product/all')</script>`
         );
     } catch (err) {
         console.log("Error, createNewProduct:", err);
@@ -48,7 +49,7 @@ productController.createNewProduct = async (
 productController.updateChosenProduct = async (req: Request, res: Response) => {
     try {
         console.log("getAllProducts");
-        const id = req.params.id as string;
+        const id = (req.params.id as string).trim();
         
         const result = await productService.updateChosenProduct( id, req.body);
 
@@ -56,7 +57,7 @@ productController.updateChosenProduct = async (req: Request, res: Response) => {
         res.send("DONE!");
     } catch (err) {
         console.log("Error, updateChosenProduct:", err);
-        
+        if (res.headersSent) return;
         if (err instanceof Errors) res.status(err.code).json(err);
         else res.status(Errors.standard.code).json(Errors.standard)};
     };

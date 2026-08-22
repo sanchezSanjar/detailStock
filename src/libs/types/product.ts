@@ -44,7 +44,7 @@ export interface ProductUpdateInput {
     productPrice?: number;
     productLeftCount?: number;
     productSize?: ProductSize;
-    productVolume?: number;
+    productVolume?: ProductVolume;
     productDesc?: string;
     productImages?: string [];
     productViews?: number;

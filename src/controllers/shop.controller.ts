@@ -5,6 +5,8 @@ import { AdminRequest, LoginInput, MemberInput } from "../libs/types/member";
 import { MemberType } from "../libs/enums/member.enum";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 
+//BSSR
+
 const memberService = new MemberService;
 
 const shopController: T = {};
@@ -43,7 +45,7 @@ shopController.getLogin = (req: Request, res: Response) => {
 shopController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processSignup");
-         const file = req.body;
+         const file = req.file;
          console.log(file);
     if (!file)
       throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
