@@ -20,19 +20,19 @@ routerAdmin.get("/check-me", shopController.checkAuthSession);
 // PRODUCT
 routerAdmin.get(
     "/product/all",
-    shopController.verifyRestaurant, 
+    shopController.verifyShop, 
     productController.getAllproducts);
 
 routerAdmin.post(
     "/product/create",
-    shopController.verifyRestaurant,
+    shopController.verifyShop,
     makeUploader("products").array("productImages", 5),
     productController.createNewProduct);
 
 
 routerAdmin.post(
     "/product/:id", 
-    shopController.verifyRestaurant, 
+    shopController.verifyShop, 
     productController.updateChosenProduct);
 
 // USER

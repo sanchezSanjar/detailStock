@@ -105,7 +105,7 @@ shopController.checkAuthSession = async (req: AdminRequest, res: Response) => {
     }
 };
 
-shopController.verifyRestaurant = (
+shopController.verifyShop = (
     req: AdminRequest, 
     res: Response, 
     next: NextFunction 
