@@ -43,7 +43,8 @@ shopController.getLogin = (req: Request, res: Response) => {
 shopController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processSignup");
-         const file = req.file;
+         const file = req.body;
+         console.log(file);
     if (!file)
       throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
 
