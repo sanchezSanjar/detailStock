@@ -18,7 +18,6 @@ memberController.signup = async (req: Request, res: Response) => {
         console.log("Error, signup:", err);
         if(err instanceof Errors) res.status(err.code).json(err);
         else res.status(Errors.standard.code).json(Errors.standard);
-        // res.status(400).json({ message: err instanceof Error ? err.message : "Signup failed" });
     }
 };
 
