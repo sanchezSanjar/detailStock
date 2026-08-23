@@ -1,7 +1,8 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Types, Schema } from "mongoose";
 import { OrderStatus } from "../libs/enums/order.enum";
+import { Order } from "../libs/types/order";
 
-const orderSchema = new Schema(
+const orderSchema = new Schema<Order>(
   {
     orderTotal: {
       type: Number,
@@ -11,13 +12,11 @@ const orderSchema = new Schema(
       type: Number,
       required: true,
     },
-
     orderStatus: {
       type: String,
       enum: OrderStatus,
       default: OrderStatus.PAUSE,
     },
-
     memberId: {
       type: Schema.Types.ObjectId,
       required: true,
@@ -27,4 +26,4 @@ const orderSchema = new Schema(
   { timestamps: true },
 );
 
-export default mongoose.model("Order", orderSchema);
+export default mongoose.model<Order>("Order", orderSchema);
