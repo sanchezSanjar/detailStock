@@ -46,7 +46,7 @@ shopController.processSignup = async (req: AdminRequest, res: Response) => {
     try {
         console.log("processSignup");
          const file = req.file;
-         console.log(file);
+        //  console.log(file);
     if (!file)
       throw new Errors(HttpCode.BAD_REQUEST, Message.SOMETHING_WENT_WRONG);
 
@@ -70,8 +70,8 @@ shopController.processSignup = async (req: AdminRequest, res: Response) => {
 
 shopController.processLogin = async (req: AdminRequest, res: Response) => {
     try {
-        console.log("processLogin");
-        console.log("body:", req.body);
+        // console.log("processLogin");
+        // console.log("body:", req.body);
         const input: LoginInput = req.body;
 
         const result = await memberService.processLogin(input);
@@ -114,11 +114,17 @@ shopController.getUsers = async (req: Request, res: Response) => {
         res.redirect("/admin/login");
     } 
 };
-shopController.updateChosenUser = (req: Request, res: Response) => {
+shopController.updateChosenUser = async (req: Request, res: Response) => {
     try { 
         console.log('updateChosenUser');
+        const result = await memberService.updateChosenUser(req.body);
+
+        res.status(HttpCode.OK).json({data: result});
     } catch (err) {
         console.log("Error, updateChosenUser:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
+
         
     } 
 };

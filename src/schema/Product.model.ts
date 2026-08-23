@@ -7,7 +7,7 @@ import {
 } from '../libs/enums/product.enum';
 import { Product } from '../libs/types/product';
 
-const productSchema = new Schema(
+const productSchema = new Schema<Product>(
     {
         productStatus: {
             type: String,
@@ -37,13 +37,13 @@ const productSchema = new Schema(
         },
 
         productSize: {
-            type: Number,
+            type: String,
             enum: ProductSize,
             default: ProductSize.NORMAL,
         },
 
         productVolume: {
-            type: String,
+            type: Number,
             enum: ProductVolume,
             default: ProductVolume.ONE,
         },
