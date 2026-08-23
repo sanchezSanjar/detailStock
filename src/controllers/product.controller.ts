@@ -24,7 +24,8 @@ productController.getAllproducts = async (req: AdminRequest, res: Response) => {
 productController.createNewProduct = async (
   req: AdminRequest,  res: Response) => {
     try {
-    console.log("creatNewProduct");
+        console.log("creatNewProduct");
+        console.log("req.body:", req.body);
         if(!req.files?.length) 
         throw new Errors(HttpCode.INTERNAL_SERVER_ERROR, Message.CREATE_FAILED);
 
@@ -35,13 +36,13 @@ productController.createNewProduct = async (
         
         await productService.createNewProduct(data);
         res.send(
-            `<script> alert("Sucessfully creation!"); window.location.replace ('admin/product/all')</script>`
+            `<script> alert("Sucessfully creation!"); window.location.replace ('/admin/product/all')</script>`
         );
     } catch (err) {
         console.log("Error, createNewProduct:", err);
         const message = 
         err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script> alert("${message}"); window.location.replace ('admin/product/all')</script>`
+        res.send(`<script> alert("${message}"); window.location.replace ('/admin/product/all')</script>`
         );
     }
 };
