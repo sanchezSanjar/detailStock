@@ -88,6 +88,25 @@ class MemberService {
 
     return result;
      }
+
+     public async addUserPoint(member: Member, point: number): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(member._id);
+
+    const result = await this.memberModel
+      .findOneAndUpdate(
+        {
+          _id: memberId,
+          memberType: MemberType.USER,
+          memberStatus: MemberStatus.ACTIVE,
+        },
+        { $inc: { memberPoints: point } },
+        { new: true },
+      )
+      .exec();
+      if (!result) {
+    throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+  } return result;
+  }
     //SSR
        
     public async processSignup(input: MemberInput):Promise<Member> {
