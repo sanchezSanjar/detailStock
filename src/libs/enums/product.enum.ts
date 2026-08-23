@@ -14,6 +14,7 @@ export enum ProductVolume {
     THREE = 3,
     FIVE = 5,
     TEN = 10,
+    ZERO = 0,
 }
 
 
