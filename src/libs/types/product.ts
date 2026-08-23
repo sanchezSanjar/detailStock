@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { Types } from "mongoose";
 import {
   ProductCollection,
   ProductSize,
@@ -45,7 +45,7 @@ export interface ProductInput {
 
 
 export interface ProductUpdateInput {
-    _id: ObjectId;
+    _id: Types.ObjectId;
     productStatus?: ProductStatus;
     productCollection?: ProductCollection;
     productName?: string;
