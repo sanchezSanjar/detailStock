@@ -7,14 +7,14 @@ export enum ProductSize {
 }
 
 export enum ProductVolume {
-    HALF = 0.5,
-    ONE = 1,
-    ONE_POINT_FIVE = 1.5,
-    TWO = 2,
-    THREE = 3,
-    FIVE = 5,
-    TEN = 10,
-    ZERO = 0,
+    HALF = "HALF",
+    ONE = "ONE",
+    ONE_POINT_FIVE = "ONE_POINT_FIVE",
+    TWO = "TWO",
+    THREE = "THREE",
+    FIVE = "FIVE",
+    TEN = "TEN",
+    ZERO = "ZERO",
 }
 
 

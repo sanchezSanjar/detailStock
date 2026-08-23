@@ -1,6 +1,10 @@
-console.log("Users frontend javascript file");
+console.log("Products frontend javascript file");
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================
+       TOP ALERT BANNER
+    ========================== */
 
     function showTopAlert(message, isError = false) {
         let banner = document.getElementById("top-alert-banner");
@@ -19,11 +23,51 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2500);
     }
 
-    const userRows = document.querySelectorAll(".user-row");
 
-    userRows.forEach((row) => {
+    /* =========================
+       IMAGE PREVIEW (create form)
+    ========================== */
 
-        const saveButton = row.querySelector(".user-save");
+    const imageInputs = document.querySelectorAll(".image-upload input[type='file']");
+
+    imageInputs.forEach((input) => {
+        input.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const validTypes = ["image/jpg", "image/jpeg", "image/png"];
+            if (!validTypes.includes(file.type)) {
+                alert("Please upload only JPG, JPEG or PNG images.");
+                input.value = "";
+                return;
+            }
+
+            const uploadBox = input.closest(".image-upload");
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                uploadBox.style.backgroundImage = `url("${e.target.result}")`;
+                uploadBox.style.backgroundSize = "cover";
+                uploadBox.style.backgroundPosition = "center";
+
+                const plus = uploadBox.querySelector("span");
+                if (plus) plus.style.display = "none";
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+
+
+    /* =========================
+       INLINE TABLE EDITING — SAVE
+    ========================== */
+
+    const productRows = document.querySelectorAll(".product-row");
+
+    productRows.forEach((row) => {
+
+        const saveButton = row.querySelector(".product-save");
         const fields = row.querySelectorAll("[data-field]");
 
         fields.forEach((field) => {
@@ -42,18 +86,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         saveButton.addEventListener("click", async () => {
 
-            const userId = saveButton.dataset.userId;
+            const productId = saveButton.dataset.productId;
 
-            const userData = { _id: userId };
+            const productData = {};
             fields.forEach((field) => {
-                userData[field.dataset.field] = field.value;
+                productData[field.dataset.field] = field.value;
             });
 
             try {
-                const response = await fetch("/admin/user/edit", {
+                const response = await fetch(`/admin/product/${productId}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(userData),
+                    body: JSON.stringify(productData),
                 });
 
                 if (!response.ok) throw new Error("Update failed");
@@ -70,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }, 1500);
 
             } catch (err) {
-                console.log("Error saving user:", err);
+                console.log("Error saving product:", err);
                 showTopAlert("Update failed. Please try again.", true);
             }
         });

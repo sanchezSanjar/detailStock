@@ -11,3 +11,108 @@ body {
     background-color: #000;
     font-family: Arial, sans-serif;
 }
+.navbar {
+    position: relative;
+    top: 0;
+ 
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+
+    z-index: 1000;
+}
+.navbar .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+/* Buttons */
+.navbar .nav-link {
+    display: block;
+
+    padding: 12px 28px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+
+    border-radius: 11px;
+
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+.navbar .nav-link:hover {
+    background: #e50914;
+    color: #ffffff;
+
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.45);
+}
+/* Active Home */
+.navbar .nav-link.active {
+    background: #e50914;
+    color: #ffffff;
+
+    box-shadow: 0 0 20px rgba(229, 9, 20, 0.35);
+}
+
+/* Logout */
+.navbar .nav-link.logout {
+    color: #ff3039;
+    border: 1px solid #e50914;
+}
+
+.navbar .nav-link.logout:hover {
+    background: #e50914;
+    color: #ffffff;
+}
+
+.top-alert {
+    position: fixed;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    padding: 14px 28px;
+    border-radius: 10px;
+
+    background: #2e9e4d;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+
+    transition: top 0.35s ease;
+}
+
+.top-alert.show {
+    top: 20px;
+}
+
+.top-alert.error {
+    background: #e50914;
+}

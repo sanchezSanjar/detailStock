@@ -1,0 +1,336 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: url('../img/default.png') center 45% / cover no-repeat;
+    background-color: #000;
+    font-family: Arial, sans-serif;
+}
+
+.products-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.products-container a {
+    text-decoration: none;
+}
+
+.products-frame {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    padding: 120px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.board {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.page-title {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ffffff;
+    background-color: #111111;
+}
+
+/* TABLE */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+
+    background: rgba(10, 10, 10, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-wrapper thead th {
+    padding: 16px 14px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #b5b5b5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    white-space: nowrap;
+}
+
+.table-wrapper tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    vertical-align: middle;
+}
+
+.table-wrapper tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-wrapper tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.table-input,
+.table-select {
+    width: 100%;
+    min-width: 90px;
+    height: 40px;
+    padding: 0 10px;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+
+    color: #ffffff;
+    font-size: 13px;
+
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.table-input.small-input {
+    min-width: 70px;
+}
+
+.table-input:focus,
+.table-select:focus {
+    outline: none;
+    border-color: #e50914;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.table-select option {
+    background: #111111;
+    color: #ffffff;
+}
+
+.empty-products {
+    padding: 40px 0;
+    text-align: center;
+    color: #8a8a8a;
+}
+
+/* SAVE BUTTON */
+
+.save-button {
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.06);
+    color: #b5b5b5;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.save-button.changed {
+    background: #e50914;
+    border-color: #e50914;
+    color: #ffffff;
+}
+
+.save-button.saved {
+    background: #2e9e4d;
+    border-color: #2e9e4d;
+    color: #ffffff;
+}
+
+/* NEW PRODUCT FORM */
+
+.new-product-section {
+    width: 100%;
+    margin-top: 50px;
+    padding: 36px 32px;
+
+    border-radius: 16px;
+    background: rgba(10, 10, 10, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.new-product-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-row {
+    display: flex;
+    gap: 16px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.input-group.full {
+    width: 100%;
+}
+
+.input-group label {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #dddddd;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    height: 50px;
+    padding: 0 16px;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.input-group textarea {
+    height: auto;
+    padding: 14px 16px;
+    resize: vertical;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #8a8a8a;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    outline: none;
+    border-color: #e50914;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.input-group select option {
+    background: #111111;
+    color: #ffffff;
+}
+
+/* IMAGE UPLOAD GRID */
+
+.image-section label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #dddddd;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.image-upload {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    background-size: cover;
+    background-position: center;
+
+    overflow: hidden;
+}
+
+.image-upload span {
+    font-size: 28px;
+    color: #8a8a8a;
+    pointer-events: none;
+}
+
+.image-upload input[type="file"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* SUBMIT BUTTON */
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.create-button {
+    padding: 14px 36px;
+    border: none;
+    border-radius: 10px;
+
+    background: #e50914;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.create-button:hover {
+    background: #ff1a25;
+    box-shadow: 0 0 25px rgba(229, 9, 20, 0.5);
+}
+
+/* NAVBAR OVERRIDE — nav-item wrapper compatibility */
+
+.products-container .nav-item {
+    list-style: none;
+}
