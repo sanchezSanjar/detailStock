@@ -56,7 +56,8 @@
                                     <th>NAME</th>
                                     <th>PHONE</th>
                                     <th>STATUS</th>
-                                    <th>SAVE</th>
+                                    <!-- <th>SAVE</th>
+                                    <th>DELETE</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,6 +90,12 @@
                                                 <button type="button" class="save-button user-save"
                                                         data-user-id="<%= value._id %>">
                                                     SAVE
+                                                </button>
+                                            </td>
+                                              <td>
+                                                <button type="button" class="delete-button user-delete"
+                                                        data-user-id="<%= value._id %>">
+                                                    DELETE
                                                 </button>
                                             </td>
                                         </tr>

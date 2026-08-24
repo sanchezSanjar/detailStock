@@ -158,3 +158,23 @@ body {
     border-color: #2e9e4d;
     color: #ffffff;
 }
+.delete-button {
+    padding: 8px 18px;
+    border: 1px solid #e50914;
+    border-radius: 8px;
+
+    background: rgba(229, 9, 20, 0.1);
+    color: #e50914;
+
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+    background: #e50914;
+    color: #ffffff;
+}

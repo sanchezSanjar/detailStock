@@ -76,4 +76,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+        const deleteButtons = document.querySelectorAll(".user-delete");
+
+deleteButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+        const userId = button.dataset.userId;
+        const row = button.closest(".user-row");
+        const name = row.querySelector('[data-field="memberNick"]').value;
+
+        if (!confirm(`Delete user "${name}"? This cannot be undone.`)) return;
+
+        try {
+            const response = await fetch(`/admin/user/${userId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) throw new Error("Delete failed");
+
+            row.remove();
+            showTopAlert("User deleted.");
+
+        } catch (err) {
+            console.log("Error deleting user:", err);
+            showTopAlert("Delete failed. Please try again.", true);
+        }
+    });
+});
+
 });

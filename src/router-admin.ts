@@ -43,5 +43,11 @@ routerAdmin.post("/user/edit",
     shopController.verifyShop, 
     shopController.updateChosenUser);
 
+routerAdmin.delete(
+    "/user/:id",
+    shopController.verifyShop,
+    shopController.deleteUser);
+
+
 
 export default routerAdmin;

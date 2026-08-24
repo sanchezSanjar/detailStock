@@ -157,6 +157,18 @@ shopController.verifyShop = (
   }
 };
 
+shopController.deleteUser = async (req: AdminRequest, res: Response) => {
+    try {
+        console.log("deleteUser");
+        const id = req.params.id;
+        const result = await memberService.deleteUser(id);
+        res.status(HttpCode.OK).json({ data: result });
+    } catch (err) {
+        console.log("Error, deleteUser:", err);
+        if (err instanceof Errors) res.status(err.code).json(err);
+        else res.status(Errors.standard.code).json(Errors.standard);
+    }
+};
 
 
 export default shopController;

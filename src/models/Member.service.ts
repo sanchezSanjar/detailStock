@@ -109,25 +109,22 @@ class MemberService {
   }
     //SSR
        
-    public async processSignup(input: MemberInput):Promise<Member> {
-        const exist = await this.memberModel
-            .findOne({memberType: MemberType.SHOP})
-            .exec();
-        console.log("exist",exist);
-        if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-        
-        const salt = await bcrypt.genSalt();
-        input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-        
-        try {
-            const result = await this.memberModel.create(input);
-            result.memberPassword = "";
-            return result;
-        } catch (err) {
-            throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-        }      
+   public async processSignup(input: MemberInput): Promise<Member> {
+    // const exist = await this.memberModel
+    //   .findOne({ memberType: MemberType.SHOP })
+    //   .exec();
+    // if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+    const salt = await bcrypt.genSalt();
+    input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
+
+    try {
+      const result = await this.memberModel.create(input);
+      result.memberPassword = "";
+      return result;
+    } catch (err) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
     }
-    
+  }
     public async processLogin(input: LoginInput): Promise<Member> {
         const member = await this.memberModel
             .findOne(
@@ -163,7 +160,7 @@ class MemberService {
 
     public async getUsers(): Promise<Member[]> {
         const result = await this.memberModel
-        .find({ memberType: MemberType.USER})
+        .find({ memberType: MemberType.SHOP})
         .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
     
@@ -179,7 +176,13 @@ class MemberService {
     
     return result;
   }
+
+
+public async deleteUser(id: string): Promise<Member> {
+    const memberId = shapeIntoMongooseObjectId(id);
+    const result = await this.memberModel.findByIdAndDelete(memberId).exec();
+    if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    return result;
 }
-
-
+}
 export default MemberService;
