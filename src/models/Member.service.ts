@@ -161,7 +161,7 @@ class MemberService {
 
     public async getUsers(): Promise<Member[]> {
         const result = await this.memberModel
-        .find({ memberType: MemberType.SHOP})
+        .find({ memberType: MemberType.USER})
         .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
     
