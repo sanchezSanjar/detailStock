@@ -4,6 +4,7 @@ import MemberService from "../models/Member.service";
 import { AdminRequest, LoginInput, MemberInput } from "../libs/types/member";
 import { MemberType } from "../libs/enums/member.enum";
 import Errors, { HttpCode, Message } from "../libs/Errors";
+import escapeHtml from "../libs/utils/escapeHtml";
 
 //BSSR
 
@@ -64,7 +65,7 @@ shopController.processSignup = async (req: AdminRequest, res: Response) => {
         console.log("Error, processSignup:", err);
         const message
          = err instanceof Errors ? err.message: Message.SOMETHING_WENT_WRONG;
-        res.send(`<script> alert("${message}"); window.location.replace('/admin/signup') </script>`);
+        res.send(`<script> alert("${escapeHtml(message)}"); window.location.replace('/admin/signup') </script>`);
     }
 };
 
@@ -85,7 +86,7 @@ shopController.processLogin = async (req: AdminRequest, res: Response) => {
         console.log("Error, processLogin:", err);
         const message
          = err instanceof Errors ? err.message: Message.SOMETHING_WENT_WRONG;
-        res.send(`<script> alert("${message}"); window.location.replace('/admin/signup') </script>`);
+        res.send(`<script> alert("${escapeHtml(message)}"); window.location.replace('/admin/signup') </script>`);
     }
 };
 
@@ -133,8 +134,8 @@ shopController.updateChosenUser = async (req: Request, res: Response) => {
 shopController.checkAuthSession = async (req: AdminRequest, res: Response) => {
     try {
         console.log("checkAuthSession");
-        if(req.session?.member) res.send(`<script>alert("${req.session.member.memberNick}") </script>`);
-        else res.send(`<script> alert("${Message.NOT_AUTHENTICATED}" </script>`);
+        if(req.session?.member) res.send(`<script>alert("${escapeHtml(req.session.member.memberNick)}") </script>`);
+        else res.send(`<script> alert("${Message.NOT_AUTHENTICATED}") </script>`);
     } catch (err) {
         console.log("Error, checkAuthSession:", err);
         res.send(err);

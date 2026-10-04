@@ -5,6 +5,7 @@ import ProductService from "../models/Product.service";
 import { AdminRequest,ExtendedRequest  } from "../libs/types/member";
 import { ProductInput, ProductInquiry  } from "../libs/types/product";
 import { ProductCollection } from "../libs/enums/product.enum";
+import escapeHtml from "../libs/utils/escapeHtml";
 
 const productService = new ProductService();
 
@@ -93,7 +94,7 @@ productController.createNewProduct = async (
         console.log("Error, createNewProduct:", err);
         const message = 
         err instanceof Errors ? err.message : Message.SOMETHING_WENT_WRONG;
-        res.send(`<script> alert("${message}"); window.location.replace ('/admin/product/all')</script>`
+        res.send(`<script> alert("${escapeHtml(message)}"); window.location.replace ('/admin/product/all')</script>`
         );
     }
 };
