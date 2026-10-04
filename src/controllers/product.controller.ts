@@ -11,6 +11,8 @@ const productService = new ProductService();
 
 const productController: T = {};
 
+const SORT_FIELDS = ["createdAt", "productPrice", "productViews"];
+
 /* SPA */
 productController.getProducts = async (req: Request, res: Response) => {
   try {
@@ -21,13 +23,13 @@ productController.getProducts = async (req: Request, res: Response) => {
     // const params = req.params;
     // console.log("req.params: ", params);
     const { page, limit, order, productCollection, search } = req.query;
-    // console.log(`page: ${page}, order: ${order}`)
+    // only real sort fields, and sane numbers for $skip / $limit
     const inquiry: ProductInquiry = {
-      order: String(order),
-      page: Number(page),
-      limit: Number(limit),
+      order: SORT_FIELDS.includes(String(order)) ? String(order) : "createdAt",
+      page: Math.max(1, Math.floor(Number(page)) || 1),
+      limit: Math.min(50, Math.max(1, Math.floor(Number(limit)) || 8)),
     };
-    if (productCollection) {
+    if (Object.values(ProductCollection).includes(productCollection as ProductCollection)) {
       inquiry.productCollection = productCollection as ProductCollection;
     }
     if (search) inquiry.search = String(search);
@@ -106,8 +108,7 @@ productController.updateChosenProduct = async (req: Request, res: Response) => {
         
         const result = await productService.updateChosenProduct( id, req.body);
 
-        // res.status(HttpCode.OK).json({data: result});
-        res.send("DONE!");
+        res.status(HttpCode.OK).json({ data: result });
     } catch (err) {
         console.log("Error, updateChosenProduct:", err);
         if (res.headersSent) return;

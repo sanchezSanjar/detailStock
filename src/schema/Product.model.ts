@@ -29,11 +29,13 @@ const productSchema = new Schema<Product>(
         productPrice: {
             type: Number,
             required:true,
+            min: 0,
         },
-        
+
         productLeftCount: {
             type: Number,
             required: true,
+            min: 0,
         },
 
         productSize: {

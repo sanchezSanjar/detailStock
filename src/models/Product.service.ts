@@ -27,7 +27,9 @@ class ProductService {
     if (inquiry.productCollection)
       match.productCollection = inquiry.productCollection;
     if (inquiry.search) {
-      match.productName = { $regex: new RegExp(inquiry.search, "i") };
+      // escape regex characters: "(" or "*" in the search box must not break the query
+      const pattern = inquiry.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      match.productName = { $regex: new RegExp(pattern, "i") };
     }
 
     const sort: T =
@@ -116,12 +118,18 @@ public async updateChosenProduct(
   ): Promise<Product> {
     // string => ObjectId
     id = shapeIntoMongooseObjectId(id);
-    const result = await this.productModel
-      .findOneAndUpdate({ _id: id }, input, { new: true })
-      .exec();
-    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
-
-    return result;
+    try {
+      // runValidators: enums and min 0 also apply to updates, not only to create
+      const result = await this.productModel
+        .findOneAndUpdate({ _id: id }, input, { new: true, runValidators: true })
+        .exec();
+      if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+      return result;
+    } catch (err) {
+      if (err instanceof Errors) throw err;
+      console.log("Error, model:updateChosenProduct:", err);
+      throw new Errors(HttpCode.BAD_REQUEST, Message.UPDATE_FAILED);
+    }
   }
 }
 export default ProductService 
