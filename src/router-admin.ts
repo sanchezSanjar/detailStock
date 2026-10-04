@@ -2,6 +2,7 @@ import express from "express";
 const routerAdmin = express.Router();
 import shopController from "./controllers/shop.controller";
 import productController from "./controllers/product.controller";
+import articleController from "./controllers/article.controller";
 import makeUploader from "./libs/utils/uploader";
 
 
@@ -43,6 +44,13 @@ routerAdmin.delete(
     "/user/:id",
     shopController.verifyShop,
     shopController.deleteUser);
+
+// ARTICLE (FAQ & NOTICES)
+routerAdmin.get("/faq/all", shopController.verifyShop, articleController.getAdminFaq);
+routerAdmin.get("/notice/all", shopController.verifyShop, articleController.getAdminNotices);
+routerAdmin.post("/article/create", shopController.verifyShop, articleController.createArticle);
+routerAdmin.post("/article/:id", shopController.verifyShop, articleController.updateArticle);
+routerAdmin.delete("/article/:id", shopController.verifyShop, articleController.deleteArticle);
 
 
 

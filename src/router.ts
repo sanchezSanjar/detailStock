@@ -4,6 +4,10 @@ import memberController from "./controllers/member.controller";
 import uploader from "./libs/utils/uploader";
 import productController from "./controllers/product.controller";
 import orderController from "./controllers/order.controller";
+import articleController from "./controllers/article.controller";
+
+/** Article (FAQ & notices) */
+router.get("/article/all", articleController.getArticles);
 
 /** Member */
 router.get("/member/shop", memberController.getShop);

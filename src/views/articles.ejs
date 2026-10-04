@@ -1,0 +1,56 @@
+<%- include('includes/header') %>
+
+<link rel="stylesheet" type="text/css" href="/css/users.css" />
+<link rel="stylesheet" type="text/css" href="/css/articles.css" />
+
+<% const label = articleType === "FAQ" ? "FAQ" : "Notice"; %>
+
+<body>
+    <div class="users-container">
+
+        <%- include("includes/nav", { active }) %>
+
+        <div class="users-frame">
+            <div class="board" data-article-type="<%= articleType %>">
+
+                <span class="page-title"><%= articleType === "FAQ" ? "FAQ ARTICLES" : "NOTICES" %></span>
+
+                <form class="article-card article-create">
+                    <span class="article-card-title">New <%= label %></span>
+                    <input type="text" class="table-input" name="articleTitle"
+                           placeholder="<%= articleType === 'FAQ' ? 'Question' : 'Title' %>" required>
+                    <textarea class="table-input article-textarea" name="articleContent"
+                              placeholder="<%= articleType === 'FAQ' ? 'Answer' : 'Content' %>" required></textarea>
+                    <div class="article-actions">
+                        <button type="submit" class="save-button changed">ADD</button>
+                    </div>
+                </form>
+
+                <% if (articles && articles.length > 0) { %>
+                    <% articles.forEach((article) => { %>
+                        <div class="article-card article-row" data-article-id="<%= article._id %>">
+                            <span class="article-date">
+                                <%= new Date(article.createdAt).toLocaleDateString("en-GB") %>
+                            </span>
+                            <input type="text" class="table-input" data-field="articleTitle"
+                                   value="<%= article.articleTitle %>">
+                            <textarea class="table-input article-textarea"
+                                      data-field="articleContent"><%= article.articleContent %></textarea>
+                            <div class="article-actions">
+                                <button type="button" class="save-button article-save">SAVE</button>
+                                <button type="button" class="delete-button article-delete">DELETE</button>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="article-card empty-users">No <%= label.toLowerCase() %> items yet.</div>
+                <% } %>
+
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/js/articles.js"></script>
+</body>
+
+<%- include('includes/footer') %>
