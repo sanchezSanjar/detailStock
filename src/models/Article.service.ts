@@ -31,6 +31,9 @@ class ArticleService {
         const update: ArticleUpdateInput = {};
         if (input.articleTitle !== undefined) update.articleTitle = input.articleTitle;
         if (input.articleContent !== undefined) update.articleContent = input.articleContent;
+        if (input.articleImage !== undefined) update.articleImage = input.articleImage;
+        if (input.articleLocation !== undefined) update.articleLocation = input.articleLocation;
+        if (input.articleAuthor !== undefined) update.articleAuthor = input.articleAuthor;
 
         const result = await this.articleModel
             .findByIdAndUpdate(shapeIntoMongooseObjectId(id), update, { new: true, runValidators: true })

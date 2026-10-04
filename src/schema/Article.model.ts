@@ -22,6 +22,21 @@ const articleSchema = new Schema<Article>(
             required: true,
             trim: true,
         },
+
+        // used by events
+        articleImage: {
+            type: String,
+        },
+
+        articleLocation: {
+            type: String,
+            trim: true,
+        },
+
+        articleAuthor: {
+            type: String,
+            trim: true,
+        },
     },
     { timestamps: true },
 );

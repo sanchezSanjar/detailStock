@@ -44,3 +44,28 @@
     justify-content: flex-end;
     gap: 10px;
 }
+
+.article-fields {
+    display: flex;
+    gap: 12px;
+}
+
+.article-image-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* whole image on grey, same as the shop */
+.article-image {
+    width: 200px;
+    height: 120px;
+    object-fit: contain;
+    background: #e4e7ea;
+    border-radius: 10px;
+}
+
+.upload-label {
+    display: inline-flex;
+    align-items: center;
+}

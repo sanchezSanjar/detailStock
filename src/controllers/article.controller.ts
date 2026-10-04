@@ -3,7 +3,7 @@ import { T } from "../libs/types/common";
 import Errors, { HttpCode, Message } from "../libs/Errors";
 import ArticleService from "../models/Article.service";
 import { ArticleType } from "../libs/enums/article.enum";
-import { ArticleInput } from "../libs/types/article";
+import { ArticleInput, ArticleUpdateInput } from "../libs/types/article";
 
 const articleService = new ArticleService();
 
@@ -16,6 +16,8 @@ const parseType = (value: unknown): ArticleType => {
     }
     return type as ArticleType;
 };
+
+const optionalText = (value: unknown) => (value === undefined ? undefined : String(value).trim());
 
 /** SPA */
 articleController.getArticles = async (req: Request, res: Response) => {
@@ -31,15 +33,17 @@ articleController.getArticles = async (req: Request, res: Response) => {
 };
 
 /** SSR */
+const activeMenu: Record<ArticleType, string> = {
+    [ArticleType.FAQ]: "faq",
+    [ArticleType.NOTICE]: "notices",
+    [ArticleType.EVENT]: "events",
+};
+
 const renderArticles = (articleType: ArticleType) => async (req: Request, res: Response) => {
     try {
         console.log("renderArticles", articleType);
         const articles = await articleService.getArticles(articleType);
-        res.render("articles", {
-            articles,
-            articleType,
-            active: articleType === ArticleType.FAQ ? "faq" : "notices",
-        });
+        res.render("articles", { articles, articleType, active: activeMenu[articleType] });
     } catch (err) {
         console.log("Error, renderArticles:", err);
         res.redirect("/admin/login");
@@ -48,6 +52,7 @@ const renderArticles = (articleType: ArticleType) => async (req: Request, res: R
 
 articleController.getAdminFaq = renderArticles(ArticleType.FAQ);
 articleController.getAdminNotices = renderArticles(ArticleType.NOTICE);
+articleController.getAdminEvents = renderArticles(ArticleType.EVENT);
 
 articleController.createArticle = async (req: Request, res: Response) => {
     try {
@@ -56,10 +61,18 @@ articleController.createArticle = async (req: Request, res: Response) => {
             articleType: parseType(req.body.articleType),
             articleTitle: String(req.body.articleTitle ?? "").trim(),
             articleContent: String(req.body.articleContent ?? "").trim(),
+            articleLocation: optionalText(req.body.articleLocation),
+            articleAuthor: optionalText(req.body.articleAuthor),
         };
+        if (req.file) input.articleImage = req.file.path.replace(/\\/g, "/");
+
         if (!input.articleTitle || !input.articleContent) {
             throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
         }
+        if (input.articleType === ArticleType.EVENT && !input.articleImage) {
+            throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+        }
+
         const result = await articleService.createArticle(input);
         res.status(HttpCode.CREATED).json({ data: result });
     } catch (err) {
@@ -72,7 +85,15 @@ articleController.createArticle = async (req: Request, res: Response) => {
 articleController.updateArticle = async (req: Request, res: Response) => {
     try {
         console.log("updateArticle");
-        const result = await articleService.updateArticle(req.params.id, req.body);
+        const input: ArticleUpdateInput = {
+            articleTitle: optionalText(req.body.articleTitle),
+            articleContent: optionalText(req.body.articleContent),
+            articleLocation: optionalText(req.body.articleLocation),
+            articleAuthor: optionalText(req.body.articleAuthor),
+        };
+        if (req.file) input.articleImage = req.file.path.replace(/\\/g, "/");
+
+        const result = await articleService.updateArticle(req.params.id, input);
         res.status(HttpCode.OK).json({ data: result });
     } catch (err) {
         console.log("Error, updateArticle:", err);

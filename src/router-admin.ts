@@ -45,11 +45,20 @@ routerAdmin.delete(
     shopController.verifyShop,
     shopController.deleteUser);
 
-// ARTICLE (FAQ & NOTICES)
+// ARTICLE (FAQ, NOTICES & EVENTS)
 routerAdmin.get("/faq/all", shopController.verifyShop, articleController.getAdminFaq);
 routerAdmin.get("/notice/all", shopController.verifyShop, articleController.getAdminNotices);
-routerAdmin.post("/article/create", shopController.verifyShop, articleController.createArticle);
-routerAdmin.post("/article/:id", shopController.verifyShop, articleController.updateArticle);
+routerAdmin.get("/event/all", shopController.verifyShop, articleController.getAdminEvents);
+routerAdmin.post(
+    "/article/create",
+    shopController.verifyShop,
+    makeUploader("articles").single("articleImage"),
+    articleController.createArticle);
+routerAdmin.post(
+    "/article/:id",
+    shopController.verifyShop,
+    makeUploader("articles").single("articleImage"),
+    articleController.updateArticle);
 routerAdmin.delete("/article/:id", shopController.verifyShop, articleController.deleteArticle);
 
 

@@ -3,7 +3,13 @@
 <link rel="stylesheet" type="text/css" href="/css/users.css" />
 <link rel="stylesheet" type="text/css" href="/css/articles.css" />
 
-<% const label = articleType === "FAQ" ? "FAQ" : "Notice"; %>
+<%
+    const isEvent = articleType === "EVENT";
+    const label = { FAQ: "FAQ", NOTICE: "Notice", EVENT: "Event" }[articleType];
+    const pageTitle = { FAQ: "FAQ ARTICLES", NOTICE: "NOTICES", EVENT: "EVENTS" }[articleType];
+    const titlePh = articleType === "FAQ" ? "Question" : "Title";
+    const contentPh = articleType === "FAQ" ? "Answer" : articleType === "EVENT" ? "Description" : "Content";
+%>
 
 <body>
     <div class="users-container">
@@ -13,14 +19,27 @@
         <div class="users-frame">
             <div class="board" data-article-type="<%= articleType %>">
 
-                <span class="page-title"><%= articleType === "FAQ" ? "FAQ ARTICLES" : "NOTICES" %></span>
+                <span class="page-title"><%= pageTitle %></span>
 
                 <form class="article-card article-create">
                     <span class="article-card-title">New <%= label %></span>
-                    <input type="text" class="table-input" name="articleTitle"
-                           placeholder="<%= articleType === 'FAQ' ? 'Question' : 'Title' %>" required>
-                    <textarea class="table-input article-textarea" name="articleContent"
-                              placeholder="<%= articleType === 'FAQ' ? 'Answer' : 'Content' %>" required></textarea>
+                    <input type="text" class="table-input" name="articleTitle" placeholder="<%= titlePh %>" required>
+                    <textarea class="table-input article-textarea" name="articleContent" placeholder="<%= contentPh %>" required></textarea>
+
+                    <% if (isEvent) { %>
+                        <div class="article-fields">
+                            <input type="text" class="table-input" name="articleLocation" placeholder="Location (e.g. All Shops)">
+                            <input type="text" class="table-input" name="articleAuthor" placeholder="Author (e.g. DetailStock Team)">
+                        </div>
+                        <div class="article-image-row">
+                            <img class="article-image" src="/img/upload.svg" alt="">
+                            <label class="save-button upload-label">
+                                CHOOSE IMAGE
+                                <input type="file" name="articleImage" accept="image/png, image/jpeg, image/jpg, image/webp" hidden required>
+                            </label>
+                        </div>
+                    <% } %>
+
                     <div class="article-actions">
                         <button type="submit" class="save-button changed">ADD</button>
                     </div>
@@ -32,10 +51,25 @@
                             <span class="article-date">
                                 <%= new Date(article.createdAt).toLocaleDateString("en-GB") %>
                             </span>
-                            <input type="text" class="table-input" data-field="articleTitle"
-                                   value="<%= article.articleTitle %>">
-                            <textarea class="table-input article-textarea"
-                                      data-field="articleContent"><%= article.articleContent %></textarea>
+                            <input type="text" class="table-input" data-field="articleTitle" value="<%= article.articleTitle %>">
+                            <textarea class="table-input article-textarea" data-field="articleContent"><%= article.articleContent %></textarea>
+
+                            <% if (isEvent) { %>
+                                <div class="article-fields">
+                                    <input type="text" class="table-input" data-field="articleLocation"
+                                           placeholder="Location" value="<%= article.articleLocation || '' %>">
+                                    <input type="text" class="table-input" data-field="articleAuthor"
+                                           placeholder="Author" value="<%= article.articleAuthor || '' %>">
+                                </div>
+                                <div class="article-image-row">
+                                    <img class="article-image" src="/<%= article.articleImage %>" alt="">
+                                    <label class="save-button upload-label">
+                                        CHANGE IMAGE
+                                        <input type="file" class="article-file" accept="image/png, image/jpeg, image/jpg, image/webp" hidden>
+                                    </label>
+                                </div>
+                            <% } %>
+
                             <div class="article-actions">
                                 <button type="button" class="save-button article-save">SAVE</button>
                                 <button type="button" class="delete-button article-delete">DELETE</button>
