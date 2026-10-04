@@ -1,0 +1,22 @@
+<nav class="navbar">
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link <%= active === 'products' ? 'active' : '' %>" href="/admin/product/all">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= active === 'users' ? 'active' : '' %>" href="/admin/user/all">Members</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= active === 'faq' ? 'active' : '' %>" href="/admin/faq/all">FAQ</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <%= active === 'notices' ? 'active' : '' %>" href="/admin/notice/all">Notices</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link logout" href="/admin/logout"
+               onclick="return confirm('Do you want to logout?')">
+                Logout
+            </a>
+        </li>
+    </ul>
+</nav>

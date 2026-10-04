@@ -5,35 +5,7 @@
 <body>
     <div class="users-container">
 
-        <nav class="navbar">
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin">Home</a>
-                </li>
-
-                <% if(!member) { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/signup">Signup</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/login">Login</a>
-                    </li>
-                <% } else { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/product/all">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/admin/user/all">Users</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link logout" href="/admin/logout"
-                           onclick="return confirm('Do you want to logout?')">
-                            Logout
-                        </a>
-                    </li>
-                <% } %>
-            </ul>
-        </nav>
+        <%- include("includes/nav", { active: "users" }) %>
 
         <% if(!member) { %>
 

@@ -10,10 +10,6 @@ routerAdmin.get("/", shopController.goHome);
 routerAdmin
     .get("/login", shopController.getLogin)
     .post("/login", shopController.processLogin);
-routerAdmin
-    .get("/signup", shopController.getSignup)
-    .post("/signup",   makeUploader("members").single("memberImage"),
-     shopController.processSignup);
 routerAdmin.get("/logout", shopController.logout);
 routerAdmin.get("/check-me", shopController.checkAuthSession);
 

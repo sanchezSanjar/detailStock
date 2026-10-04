@@ -110,27 +110,11 @@ class MemberService {
   }
     //SSR
        
-   public async processSignup(input: MemberInput): Promise<Member> {
-        const exist = await this.memberModel
-        .findOne({ memberType: MemberType.SHOP})
-        .exec();
-    if (exist) throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-
-    const salt = await bcrypt.genSalt();
-    input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
-
-    try {
-        const result = await this.memberModel.create(input);
-        result.memberPassword= "";
-        return result;
-    } catch (err) {
-        throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
-    }
-  }
     public async processLogin(input: LoginInput): Promise<Member> {
+        // Admin panel is only for the shop account
         const member = await this.memberModel
             .findOne(
-                {memberNick:input.memberNick},
+                {memberNick: input.memberNick, memberType: MemberType.SHOP},
                 {memberNick: 1, memberPassword: 1} 
             )
             .exec();
