@@ -9,18 +9,33 @@ import {
 } from "../libs/types/order";
 import OrderModel from "../schema/Order.model";
 import OrderItemModel from "../schema/OrderItem.model";
-import { ObjectId } from "mongoose";
+import ProductModel from "../schema/Product.model";
 import { OrderStatus } from "../libs/enums/order.enum";
+import { ProductStatus } from "../libs/enums/product.enum";
 import MemberService from "./Member.service";
+
+// which status a member may move an order to, from its current status
+const ALLOWED_STATUS_CHANGES: Partial<Record<OrderStatus, OrderStatus[]>> = {
+  [OrderStatus.PAUSE]: [OrderStatus.PROCESS, OrderStatus.DELETE],
+  [OrderStatus.PROCESS]: [OrderStatus.FINISH],
+};
+
+interface ReservedItem {
+  productId: any;
+  itemQuantity: number;
+  itemPrice: number;
+}
 
 class OrderService {
   private readonly orderModel;
   private readonly orderItemModel;
+  private readonly productModel;
   private readonly memberService;
 
   constructor() {
     this.orderModel = OrderModel;
     this.orderItemModel = OrderItemModel;
+    this.productModel = ProductModel;
     this.memberService = new MemberService();
   }
 
@@ -29,46 +44,90 @@ class OrderService {
     input: OrderItemInput[],
   ): Promise<Order> {
     const memberId = shapeIntoMongooseObjectId(member._id);
-    const amount = input.reduce((accumulator: number, item: OrderItemInput) => {
-      return accumulator + item.itemPrice * item.itemQuantity;
-    }, 0);
-    const delivery = amount < 100 ? 5 : 0;
-    //console.log("values: ", amount, delivery);
+    if (!Array.isArray(input) || input.length === 0) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.EMPTY_ORDER);
+    }
 
+    // merge duplicate products and validate quantities
+    const quantities = new Map<string, number>();
+    for (const item of input) {
+      const quantity = Math.floor(Number(item?.itemQuantity));
+      if (!Number.isFinite(quantity) || quantity < 1) {
+        throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
+      }
+      const productId = String(shapeIntoMongooseObjectId(String(item.productId)));
+      quantities.set(productId, (quantities.get(productId) ?? 0) + quantity);
+    }
+
+    // prices always come from the database, never from the client
+    const products = await this.productModel
+      .find({
+        _id: { $in: [...quantities.keys()].map((id) => shapeIntoMongooseObjectId(id)) },
+        productStatus: ProductStatus.PROCESS,
+      })
+      .exec();
+    if (products.length !== quantities.size) {
+      throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+    }
+
+    const reserved = await this.reserveStock(
+      products.map((product) => ({
+        productId: product._id,
+        itemQuantity: quantities.get(String(product._id)) as number,
+        itemPrice: product.productPrice,
+      })),
+    );
+
+    const amount = reserved.reduce((sum, item) => sum + item.itemPrice * item.itemQuantity, 0);
+    const delivery = amount < 100 ? 5 : 0;
+
+    let newOrder: Order | null = null;
     try {
-      const newOrder: Order = await this.orderModel.create({
+      newOrder = await this.orderModel.create({
         orderTotal: amount + delivery,
         orderDelivery: delivery,
         memberId: memberId,
       });
-
-      const orderId = newOrder._id;
-
-      console.log("orderId: ", orderId);
-      await this.recordOrderItem(orderId, input);
-
-      //TODO: create order items
+      await this.orderItemModel.insertMany(
+        reserved.map((item) => ({ ...item, orderId: newOrder?._id })),
+      );
       return newOrder;
     } catch (err) {
       console.log("Error, model: createOrder: ", err);
+      // undo everything so a failed order leaves no trace
+      if (newOrder) await this.orderModel.deleteOne({ _id: newOrder._id }).exec();
+      await this.releaseStock(reserved);
       throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
     }
   }
 
-  private async recordOrderItem(
-    orderId: ObjectId,
-    input: OrderItemInput[],
-  ): Promise<void> {
-    const promisedList = input.map(async (item: OrderItemInput) => {
-      item.orderId = orderId;
-      item.productId = shapeIntoMongooseObjectId(item.productId);
-      await this.orderItemModel.create(item);
-      return "INSERTED";
-    });
+  /** Takes items out of stock one by one; rolls back if any product runs out. */
+  private async reserveStock(items: ReservedItem[]): Promise<ReservedItem[]> {
+    const done: ReservedItem[] = [];
+    for (const item of items) {
+      const result = await this.productModel
+        .updateOne(
+          { _id: item.productId, productLeftCount: { $gte: item.itemQuantity } },
+          { $inc: { productLeftCount: -item.itemQuantity } },
+        )
+        .exec();
+      if (result.modifiedCount === 0) {
+        await this.releaseStock(done);
+        throw new Errors(HttpCode.BAD_REQUEST, Message.OUT_OF_STOCK);
+      }
+      done.push(item);
+    }
+    return done;
+  }
 
-    //console.log("promisedList: ", promisedList); => PENDING
-    const orderItemState = await Promise.all(promisedList);
-    console.log("orderItemState: ", orderItemState);
+  private async releaseStock(items: { productId: any; itemQuantity: number }[]): Promise<void> {
+    await Promise.all(
+      items.map((item) =>
+        this.productModel
+          .updateOne({ _id: item.productId }, { $inc: { productLeftCount: item.itemQuantity } })
+          .exec(),
+      ),
+    );
   }
 
   public async getMyOrders(
@@ -108,7 +167,6 @@ class OrderService {
     return result;
   }
 
-
   public async updateOrder(
     member: Member,
     input: OrderUpdateInput,
@@ -117,21 +175,32 @@ class OrderService {
     const orderId = shapeIntoMongooseObjectId(input.orderId),
       orderStatus = input.orderStatus;
 
+    const order = await this.orderModel.findOne({ _id: orderId, memberId: memberId }).exec();
+    if (!order) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
+
+    if (!ALLOWED_STATUS_CHANGES[order.orderStatus]?.includes(orderStatus)) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.INVALID_ORDER_STATUS);
+    }
+
+    // the status filter makes a double click or a second tab unable to apply the change twice
     const result = await this.orderModel
       .findOneAndUpdate(
-        {
-          memberId: memberId,
-          _id: orderId,
-        },
+        { _id: orderId, memberId: memberId, orderStatus: order.orderStatus },
         { orderStatus: orderStatus },
         { new: true },
       )
       .exec();
     if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
 
-    // orderStatus PAUSE => PROCESS ==> Point +1
     if (orderStatus === OrderStatus.PROCESS) {
+      // PAUSE => PROCESS: +1 point, once per order
       await this.memberService.addUserPoint(member, 1);
+    } else if (orderStatus === OrderStatus.DELETE) {
+      // cancelled: give the reserved stock back
+      const items = await this.orderItemModel.find({ orderId: orderId }).exec();
+      await this.releaseStock(
+        items.map((item) => ({ productId: item.productId, itemQuantity: item.itemQuantity })),
+      );
     }
     return result;
   }

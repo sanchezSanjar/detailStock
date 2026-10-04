@@ -1,4 +1,4 @@
-import Errors, { HttpCode } from "../libs/Errors";
+import Errors, { HttpCode, Message } from "../libs/Errors";
 import { T } from "../libs/types/common";
 import { ExtendedRequest } from "../libs/types/member";
 import { Response } from "express";
@@ -28,9 +28,13 @@ orderController.getMyOrders = async (req: ExtendedRequest, res: Response) => {
     console.log("getMyOrders");
     const { page, limit, orderStatus } = req.query;
     //console.log("req.query:", req.query);
+    if (!Object.values(OrderStatus).includes(orderStatus as OrderStatus)) {
+      throw new Errors(HttpCode.BAD_REQUEST, Message.INVALID_ORDER_STATUS);
+    }
+    // NaN or huge values would break $skip / $limit
     const inquiry: OrderInquiry = {
-      page: Number(page),
-      limit: Number(limit),
+      page: Math.max(1, Math.floor(Number(page)) || 1),
+      limit: Math.min(50, Math.max(1, Math.floor(Number(limit)) || 5)),
       orderStatus: orderStatus as OrderStatus,
     };
     console.log("inquiry: ", inquiry);
