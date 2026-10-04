@@ -61,6 +61,7 @@ class MemberService {
         
         const result = await this.memberModel.findById(member._id).lean().exec();
         if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+        (result as Member).memberPassword = "";
         return result;
     }
 
@@ -145,9 +146,10 @@ class MemberService {
         
         const result = await this.memberModel.findById(member._id).exec();
         if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_MEMBER_NICK);
+        result.memberPassword = "";
         return result;
     }
-    
+
     public async getMemberDetail(member: Member): Promise<Member> {
     const memberId = shapeIntoMongooseObjectId(member._id);
     const result = await this.memberModel
