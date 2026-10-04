@@ -16,7 +16,9 @@ const store = new MongoDBStore({
     collection: "sessions",
 });
 
-
+const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim());
 
 // Entrance
 const app = express();
@@ -27,7 +29,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: true,
+    origin: allowedOrigins,
   }),
 );
 app.use(cookieParser());
