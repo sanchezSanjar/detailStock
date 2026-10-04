@@ -78,13 +78,17 @@ class OrderService {
       })),
     );
 
-    const amount = reserved.reduce((sum, item) => sum + item.itemPrice * item.itemQuantity, 0);
-    const delivery = amount < 100 ? 5 : 0;
+    // sum in cents: 29.99 + 24.99 in floating point is 54.980000000000004
+    const amountCents = reserved.reduce(
+      (sum, item) => sum + Math.round(item.itemPrice * 100) * item.itemQuantity,
+      0,
+    );
+    const delivery = amountCents < 100 * 100 ? 5 : 0;
 
     let newOrder: Order | null = null;
     try {
       newOrder = await this.orderModel.create({
-        orderTotal: amount + delivery,
+        orderTotal: (amountCents + delivery * 100) / 100,
         orderDelivery: delivery,
         memberId: memberId,
       });
