@@ -20,6 +20,11 @@ const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:3000")
   .split(",")
   .map((origin) => origin.trim());
 
+// In development Vite may start on 3001, 3002... when 3000 is busy; without this every
+// API call from that tab is blocked and the pages silently show no data.
+const isLocalDevOrigin = (origin: string) =>
+  process.env.NODE_ENV !== "production" && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin);
+
 // Entrance
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
@@ -29,7 +34,11 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // requests without Origin (curl, same-origin admin pages) are allowed
+      if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) callback(null, true);
+      else callback(null, false);
+    },
   }),
 );
 app.use(cookieParser());
