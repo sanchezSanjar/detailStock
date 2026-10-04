@@ -114,8 +114,9 @@ body {
     transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.table-input.small-input {
-    min-width: 70px;
+
+.table-input.name-input {
+    min-width: 280px;
 }
 
 .table-input:focus,
