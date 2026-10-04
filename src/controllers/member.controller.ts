@@ -11,6 +11,7 @@ import {
 import Errors, { HttpCode, Message}from "../libs/Errors";
 import { AUTH_TIMER } from "../libs/config";
 import AuthService from "../models/Auth.service";
+import { MemberType } from "../libs/enums/member.enum";
 
 
 const memberService = new MemberService();
@@ -34,8 +35,17 @@ memberController.getShop = async (req: Request, res: Response) => {
 memberController.signup = async (req: Request, res: Response) => {
     try {
         console.log("signup");
-        const input: MemberInput = req.body,
-            result: Member = await memberService.signup(input);
+        // build the input field by field so a client cannot sign up as SHOP or set its own points/status
+        const input: MemberInput = {
+            memberNick: String(req.body.memberNick ?? "").trim(),
+            memberPhone: String(req.body.memberPhone ?? "").trim(),
+            memberPassword: String(req.body.memberPassword ?? ""),
+            memberType: MemberType.USER,
+        };
+        if (!input.memberNick || !input.memberPhone || !input.memberPassword) {
+            throw new Errors(HttpCode.BAD_REQUEST, Message.MISSING_FIELDS);
+        }
+        const result: Member = await memberService.signup(input);
         //TOKENS AUTHENTICATION
     const token = await authService.createToken(result);
     // console.log("token=>", token);
@@ -106,8 +116,17 @@ memberController.updateMember = async (req: ExtendedRequest, res: Response) => {
   try {
     console.log("updateMember");
 
-    const input: MemberUpdateInput = req.body;
-    if (req.file) input.memberImage = req.file.path;
+    // members may only edit their profile fields, never type, status, points or password
+    const input: Partial<MemberUpdateInput> = {};
+    if (req.body.memberNick !== undefined) input.memberNick = String(req.body.memberNick).trim();
+    if (req.body.memberPhone !== undefined) input.memberPhone = String(req.body.memberPhone).trim();
+    if (req.body.memberAddress !== undefined) input.memberAddress = String(req.body.memberAddress);
+    if (req.body.memberDesc !== undefined) input.memberDesc = String(req.body.memberDesc);
+    if (req.file) input.memberImage = req.file.path.replace(/\\/g, "/");
+
+    if (input.memberNick === "" || input.memberPhone === "") {
+        throw new Errors(HttpCode.BAD_REQUEST, Message.MISSING_FIELDS);
+    }
 
     const result = await memberService.updateMember(req.member, input);
 
@@ -140,10 +159,17 @@ memberController.verifyAuth = async (
 ) => {
     try {
         const token = req.cookies["accessToken"];
-        if (token) req.member = await authService.checkAuth(token);
-        if (!req.member)
+        if (!token) throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
+
+        try {
+            const tokenMember = await authService.checkAuth(token);
+            // reload from DB: blocked or deleted members lose access now, not when the token expires
+            req.member = await memberService.getMemberDetail(tokenMember);
+        } catch {
+            // expired, tampered or no longer active => 401 so the client logs out
             throw new Errors(HttpCode.UNAUTHORIZED, Message.NOT_AUTHENTICATED);
-         next();
+        }
+        next();
     } catch (err) {
     console.log("Error, verifyAuth:", err);
     if (err instanceof Errors) res.status(err.code).json(err);

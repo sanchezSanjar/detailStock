@@ -67,15 +67,20 @@ class MemberService {
 
     public async updateMember(
     member: Member,
-    input: MemberUpdateInput,
+    input: Partial<MemberUpdateInput>,
     ): Promise<Member> {
         const memberId = shapeIntoMongooseObjectId(member._id);
-        const result = await this.memberModel
-        .findOneAndUpdate({ _id: memberId }, input, { new: true })
-        .exec();
-        if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
-
-        return result;
+        try {
+            const result = await this.memberModel
+            .findOneAndUpdate({ _id: memberId }, input, { new: true, runValidators: true })
+            .exec();
+            if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+            return result;
+        } catch (err) {
+            if (err instanceof Errors) throw err;
+            // unique index on nick / phone
+            throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+        }
     }
 
     public async getTopUsers(): Promise<Member[]> {
@@ -181,7 +186,10 @@ class MemberService {
 
 public async deleteUser(id: string): Promise<Member> {
     const memberId = shapeIntoMongooseObjectId(id);
-    const result = await this.memberModel.findByIdAndDelete(memberId).exec();
+    // never let the admin panel delete the shop account itself
+    const result = await this.memberModel
+        .findOneAndDelete({ _id: memberId, memberType: MemberType.USER })
+        .exec();
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
     return result;
 }

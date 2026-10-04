@@ -21,6 +21,10 @@ export enum Message {
     BLOCKED_USER = "You have been blocked, contact with restaurant!",
     WRONG_PASSWORD = "Wrong password, please try again!",
     NOT_AUTHENTICATED = "You are not authenticated, Please login first",
+    MISSING_FIELDS = "Please fill out all required fields!",
+    EMPTY_ORDER = "Your basket is empty!",
+    OUT_OF_STOCK = "Some products are out of stock!",
+    INVALID_ORDER_STATUS = "This order status change is not allowed!",
 }
 
 class Errors extends Error {
