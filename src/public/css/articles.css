@@ -69,3 +69,9 @@
     display: inline-flex;
     align-items: center;
 }
+
+/* keep the title in line with the 900px cards */
+.article-board .page-title {
+    max-width: 900px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}

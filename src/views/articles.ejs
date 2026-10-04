@@ -6,7 +6,7 @@
 <%
     const isEvent = articleType === "EVENT";
     const label = { FAQ: "FAQ", NOTICE: "Notice", EVENT: "Event" }[articleType];
-    const pageTitle = { FAQ: "FAQ ARTICLES", NOTICE: "NOTICES", EVENT: "EVENTS" }[articleType];
+    const pageTitle = { FAQ: "FAQ", NOTICE: "NOTICES", EVENT: "EVENTS" }[articleType];
     const titlePh = articleType === "FAQ" ? "Question" : "Title";
     const contentPh = articleType === "FAQ" ? "Answer" : articleType === "EVENT" ? "Description" : "Content";
 %>
@@ -17,7 +17,7 @@
         <%- include("includes/nav", { active }) %>
 
         <div class="users-frame">
-            <div class="board" data-article-type="<%= articleType %>">
+            <div class="board article-board" data-article-type="<%= articleType %>">
 
                 <span class="page-title"><%= pageTitle %></span>
 
