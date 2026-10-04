@@ -116,3 +116,27 @@ body {
 .top-alert.error {
     background: #e50914;
 }
+/* Page titles: centred label with a border so it reads over the background */
+.board > .page-title,
+.new-product-section > .page-title {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto 28px;
+    padding: 12px 36px;
+
+    background: rgba(10, 10, 10, 0.75);
+    border: 2px solid #e50914;
+    border-radius: 14px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(229, 9, 20, 0.25);
+
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-align: center;
+    text-transform: uppercase;
+}
