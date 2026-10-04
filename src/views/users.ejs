@@ -18,7 +18,7 @@
             <div class="users-frame">
                 <div class="board">
 
-                    <span class="page-title">ALL USERS</span>
+                    <span class="page-title">ALL MEMBERS</span>
 
                     <div class="table-wrapper">
                         <table>
@@ -27,9 +27,12 @@
                                     <th>#</th>
                                     <th>NAME</th>
                                     <th>PHONE</th>
+                                    <th>ADDRESS</th>
+                                    <th>DESCRIPTION</th>
+                                    <th>POINTS</th>
                                     <th>STATUS</th>
-                                    <!-- <th>SAVE</th>
-                                    <th>DELETE</th> -->
+                                    <th>SAVE</th>
+                                    <th>DELETE</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,6 +51,24 @@
                                                 <input type="text" class="table-input"
                                                        data-field="memberPhone"
                                                        value="<%= value.memberPhone %>">
+                                            </td>
+
+                                            <td>
+                                                <input type="text" class="table-input"
+                                                       data-field="memberAddress"
+                                                       value="<%= value.memberAddress || '' %>">
+                                            </td>
+
+                                            <td>
+                                                <input type="text" class="table-input"
+                                                       data-field="memberDesc"
+                                                       value="<%= value.memberDesc || '' %>">
+                                            </td>
+
+                                            <td>
+                                                <input type="number" min="0" class="table-input points-input"
+                                                       data-field="memberPoints"
+                                                       value="<%= value.memberPoints || 0 %>">
                                             </td>
 
                                             <td>
@@ -74,7 +95,7 @@
                                     <% }) %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="5" class="empty-users">No users found.</td>
+                                        <td colspan="9" class="empty-users">No users found.</td>
                                     </tr>
                                 <% } %>
                             </tbody>

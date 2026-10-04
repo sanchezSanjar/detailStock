@@ -44,6 +44,7 @@ export interface MemberUpdateInput {
     memberAddress?: string;
     memberDesc?: string;
     memberImage?: string;
+    memberPoints?: number;
 }
 
 export interface ExtendedRequest extends Request {

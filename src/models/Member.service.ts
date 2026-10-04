@@ -154,15 +154,29 @@ class MemberService {
      return result;
   }
   
-    public async updateChosenUser(input:MemberUpdateInput): Promise<Member> {
-        input._id = shapeIntoMongooseObjectId(input._id);
-        const result = await this.memberModel
-        .findByIdAndUpdate({ _id: input._id}, input, {new: true})
-        .exec();
-    if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
-    
-    return result;
-  }
+    public async updateChosenUser(input: MemberUpdateInput): Promise<Member> {
+        const memberId = shapeIntoMongooseObjectId(input._id);
+
+        // Only these fields can be changed from the admin panel
+        const update: Partial<MemberUpdateInput> & { memberPoints?: number } = {};
+        if (input.memberNick !== undefined) update.memberNick = input.memberNick.trim();
+        if (input.memberPhone !== undefined) update.memberPhone = input.memberPhone.trim();
+        if (input.memberStatus !== undefined) update.memberStatus = input.memberStatus;
+        if (input.memberAddress !== undefined) update.memberAddress = input.memberAddress;
+        if (input.memberDesc !== undefined) update.memberDesc = input.memberDesc;
+        if (input.memberPoints !== undefined) update.memberPoints = Math.max(0, Number(input.memberPoints) || 0);
+
+        try {
+            const result = await this.memberModel
+                .findOneAndUpdate({ _id: memberId, memberType: MemberType.USER }, update, { new: true, runValidators: true })
+                .exec();
+            if (!result) throw new Errors(HttpCode.NOT_MODIFIED, Message.UPDATE_FAILED);
+            return result;
+        } catch (err) {
+            if (err instanceof Errors) throw err;
+            throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+        }
+    }
 
 
 public async deleteUser(id: string): Promise<Member> {
