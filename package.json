@@ -9,8 +9,9 @@
   "scripts": {
     "start": "ts-node src/server.ts",
     "start:dev": "nodemon --exec ts-node src/server.ts",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && rm -rf dist/views dist/public && cp -r src/views src/public dist/",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:prod": "node dist/server.js"
   },
   "nodemonConfig": {
     "watch": [
